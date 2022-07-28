@@ -1,0 +1,9 @@
+<div class="nested-form-wrapper" data-new-record="<%= f.object.new_record? %>">
+    <%= f.fields_for :user do |user_form| %>
+        <%= user_form.label :name, style: "display: block" %>
+        <%= user_form.text_field :name %>
+
+        <%= user_form.label :age, style: "display: block" %>
+        <%= user_form.text_field :age %>
+    <% end %>
+</div>

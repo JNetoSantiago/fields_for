@@ -1,0 +1,60 @@
+<%= form_with(model: article, data: { controller: 'nested-form author-nested', nested_form_wrapper_selector_value: '.nested-form-wrapper', author_nested_url_value: users_url }) do |article_form| %>
+  <% if article.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(article.errors.count, "error") %> prohibited this article from being saved:</h2>
+
+      <ul>
+        <% article.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= article_form.label :title, style: "display: block" %>
+    <%= article_form.text_field :title %>
+  </div>
+
+  <div>
+    <%= article_form.label :subtitle, style: "display: block" %>
+    <%= article_form.text_field :subtitle %>
+  </div>
+
+  <h1>Cadastrar Usuario</h1>
+
+  <h3>Pesquisar usuário</h3>
+  <input 
+    type="search"
+    name="author_query"
+    data-action="change->author-nested#search" 
+    data-author-nested-target="searchInput"
+  />
+
+  <template data-nested-form-target="template">
+    <%= article_form.fields_for :collaborations, child_index: 'NEW_RECORD' do |collaboration_form| %>
+      <%= render "collaboration_form", f: collaboration_form %>
+    <% end %>
+  </template>
+
+  <template data-author-nested-target="authorIdTemplate">
+    <%= article_form.fields_for :collaborations, child_index: 'NEW_RECORD' do |collaboration_form| %>
+      <%= collaboration_form.fields_for :user do |user_form| %>
+        <%= user_form.hidden_field :id %>
+      <% end %>
+    <% end %>
+  </template>
+
+  <%= article_form.fields_for :collaborations do |collaboration_form| %>
+    <%= render "collaboration_form", f: collaboration_form %>
+  <% end %>
+
+  <!-- Inserted elements will be injected before that target. -->
+  <div data-nested-form-target="target" data-author-nested-target="target"></div>
+
+  <button type="button" data-action="nested-form#add">Add Author</button>
+
+  <div>
+    <%= article_form.submit %>
+  </div>
+<% end %>
